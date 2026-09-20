@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
-
+import { colors } from './theme';
 export type RootStackParamList = {
   Home: undefined;
   Detail: { movie: any };
@@ -17,9 +17,27 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Filmovi' }} />
-        <Stack.Screen name="Detail" component={DetailScreen} options={{ title: 'Detalji' }} />
-        <Stack.Screen name="Favorites" component={FavoritesScreen} options={{title: 'Favoriti'}} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+  name="Detail"
+  component={DetailScreen}
+  options={{
+    title: '',
+    headerStyle: { backgroundColor: colors.background },
+    headerTintColor: colors.text,
+    headerShadowVisible: false,
+  }}
+/>
+        <Stack.Screen
+  name="Favorites"
+  component={FavoritesScreen}
+  options={{
+    title: '',
+    headerStyle: { backgroundColor: colors.background },
+    headerTintColor: colors.text,
+    headerShadowVisible: false,
+  }}
+/>
       </Stack.Navigator>
 
   

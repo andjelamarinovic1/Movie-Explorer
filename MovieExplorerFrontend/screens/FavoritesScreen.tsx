@@ -6,8 +6,8 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-
 import MovieCard from "../components/MovieCard";
+import { colors } from "../theme";
 
 export default function FavoritesScreen() {
   const [favorites, setFavorites] = useState<any[]>([]);
@@ -28,22 +28,35 @@ export default function FavoritesScreen() {
       setLoading(false);
     }
   };
-const deleteFavorite = async (id: string) => {
-  try {
-    const response = await fetch(`http://192.168.0.24:3000/favorites/${id}`, {
-      method: "DELETE",
-    });
-    setFavorites(favorites.filter((favorite) => favorite._id !== id));
-  } catch (error) {
-    console.log("greška pri brisanju filma:", error);
+
+  const deleteFavorite = async (id: string) => {
+    try {
+      const response = await fetch(`http://192.168.0.24:3000/favorites/${id}`, {
+        method: "DELETE",
+      });
+      setFavorites(favorites.filter((favorite) => favorite._id !== id));
+    } catch (error) {
+      console.log("greška pri brisanju filma:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
   }
-};
-  
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        {favorites.length === 0 && <Text>Nemaš još sačuvanih favorita</Text>}
+
+<Text style={styles.headerLabel}>TVOJI FAVORITI</Text>
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {favorites.length === 0 && (
+          <Text style={styles.emptyText}>Nemaš još sačuvanih favorita</Text>
+        )}
 
         {favorites.map((favorite) => (
           <MovieCard
@@ -65,6 +78,24 @@ const deleteFavorite = async (id: string) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: colors.background,
+    paddingTop: 16,
   },
+  scrollContent: {
+    paddingHorizontal: 16,
+  },
+  emptyText: {
+    textAlign: 'center',
+    fontSize: 15,
+    color: colors.textSecondary,
+    marginTop: 40,
+  },
+
+  headerLabel: {
+  color: colors.textSecondary,
+  fontSize: 11,
+  letterSpacing: 0.5,
+  paddingHorizontal: 16,
+  marginBottom: 16,
+},
 });

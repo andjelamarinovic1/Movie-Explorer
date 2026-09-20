@@ -12,6 +12,9 @@ import { useState, useEffect } from "react";
 import MovieCard from "../components/MovieCard";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
+import { colors } from "../theme";
+import { Ionicons } from '@expo/vector-icons';
+
 
 interface Movie {
   id: number;
@@ -90,18 +93,29 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Pressable
-        style={styles.favoritesButton}
-        onPress={() => navigation.navigate("Favorites")}
-      >
-        <Text style={styles.favoritesButtonText}>Moji Favoriti</Text>
-      </Pressable>
+     <View style={styles.header}>
+  <Text style={styles.headerLabel}>DOBRODOŠAO/LA NAZAD</Text>
+  <View style={styles.headerIcons}>
+    <Pressable style={styles.iconButton} onPress={() => navigation.navigate('Favorites')}>
+      <Ionicons name="heart" size={18} color={colors.primary} />
+    </Pressable>
+    <Pressable style={styles.iconButton}>
+      <Text style={styles.avatarText}>A</Text>
+    </Pressable>
+  </View>
+</View>
+<View style= {styles.searchContainer}>
+  <Ionicons name="search" size={16} color={colors.textSecondary} />
       <TextInput
         style={styles.searchInput}
-        placeholder="Pretraži filmove..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
+  placeholder="Pretraži filmove..."
+  placeholderTextColor={colors.textSecondary}
+  value={searchQuery} 
+  onChangeText={setSearchQuery}
+
       />
+
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {movies.length === 0 && searchQuery.trim() !== "" && (
           <Text style={styles.noResults}>
@@ -125,22 +139,31 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.background,
     paddingTop: 50,
   },
   scrollContent: {
     paddingHorizontal: 16,
   },
 
-  searchInput: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 10,
     marginHorizontal: 16,
     marginBottom: 12,
+    backgroundColor: colors.surface,
+  },
+
+  searchInput: {
+     flex: 1,
+    paddingVertical: 10,
     fontSize: 16,
+    color: colors.text,
   },
 
   noResults: {
@@ -150,18 +173,35 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
 
-  favoritesButton: {
-    backgroundColor: "#333",
-    paddingVertical: 10,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 16,
   },
-  favoritesButtonText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
+  headerLabel: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    letterSpacing: 0.5,
+  },
+  headerIcons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  iconButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: colors.surface,
+    borderWidth: 0.5,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
