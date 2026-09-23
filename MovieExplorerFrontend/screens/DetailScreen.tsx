@@ -3,18 +3,25 @@ import { useRoute, RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { colors } from '../theme';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect , useState } from "react";
 
 type DetailScreenRouteProp = RouteProp<RootStackParamList, "Detail">;
 
 export default function DetailScreen() {
   const route = useRoute<DetailScreenRouteProp>();
   const { movie } = route.params;
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteId, setFavoriteId] = useState<string | null>(null);
 
   const addToFavorites = async () => {
     try {
+
+      const token = await AsyncStorage.getItem('token');
       const response = await fetch('http://192.168.0.24:3000/favorites', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+          'Authorization': token || '', },
         body: JSON.stringify({
           movieId: movie.id,
           title: movie.title,
@@ -23,10 +30,61 @@ export default function DetailScreen() {
         }),
       });
       const savedFavorite = await response.json();
+      setIsFavorite(true);
     } catch (error) {
       console.log('Greška:', error);
     }
   };
+
+
+
+const checkIfFavorite = async () => {
+
+  try{
+
+    const token = await AsyncStorage.getItem('token');
+    const response = await fetch(`http://192.168.0.24:3000/favorites/check/${movie.id}`, {
+        method: 'GET',
+        headers: { 
+          'Authorization': token || '', },
+      
+      });
+
+      const data = await response.json();
+      setIsFavorite(data.isFavorite);
+      setFavoriteId(data.favoriteId);
+
+
+  }catch (error) {
+
+    console.log(error);
+
+  }
+}
+
+useEffect(() => {
+
+  checkIfFavorite();
+}, []);
+
+const toggleFavorite = async () => {
+  const token = await AsyncStorage.getItem('token');
+
+  if (isFavorite) {
+    
+
+  await fetch(`http://192.168.0.24:3000/favorites/${favoriteId}`, {
+    method: 'DELETE',
+    headers: { Authorization: token || '' },
+  });
+  setIsFavorite(false);
+
+
+  } else {
+   await addToFavorites();
+  }
+};
+
 
   return (
     <ScrollView style={styles.container}>
@@ -35,8 +93,8 @@ export default function DetailScreen() {
           source={{ uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}` }}
           style={styles.poster}
         />
-        <Pressable style={styles.favoriteFloatingButton} onPress={addToFavorites}>
-          <Ionicons name="heart" size={20} color={colors.primary} />
+        <Pressable style={styles.favoriteFloatingButton} onPress={toggleFavorite}>
+          <Ionicons name={isFavorite ?  "heart" : "heart-outline"} size={20} color={colors.primary} />
         </Pressable>
       </View>
 

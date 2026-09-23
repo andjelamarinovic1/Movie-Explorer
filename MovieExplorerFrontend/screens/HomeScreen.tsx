@@ -99,7 +99,7 @@ export default function HomeScreen() {
     <Pressable style={styles.iconButton} onPress={() => navigation.navigate('Favorites')}>
       <Ionicons name="heart" size={18} color={colors.primary} />
     </Pressable>
-    <Pressable style={styles.iconButton}>
+    <Pressable style={styles.iconButton} onPress={() => navigation.navigate('Profile')}>
       <Text style={styles.avatarText}>A</Text>
     </Pressable>
   </View>

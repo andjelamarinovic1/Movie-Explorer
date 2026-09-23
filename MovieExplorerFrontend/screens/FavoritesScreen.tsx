@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import MovieCard from "../components/MovieCard";
 import { colors } from "../theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function FavoritesScreen() {
   const [favorites, setFavorites] = useState<any[]>([]);
@@ -19,8 +20,14 @@ export default function FavoritesScreen() {
 
   const fetchFavorites = async () => {
     try {
-      const response = await fetch("http://192.168.0.24:3000/favorites");
+      const token = await AsyncStorage.getItem('token');
+      const response = await fetch("http://192.168.0.24:3000/favorites", {
+       headers:{
+         Authorization: token || '',
+       }
+      });
       const data = await response.json();
+    
       setFavorites(data);
     } catch (error) {
       console.log("Greška pri dohvatanju favorita:", error);
@@ -31,8 +38,14 @@ export default function FavoritesScreen() {
 
   const deleteFavorite = async (id: string) => {
     try {
+      const token = await AsyncStorage.getItem('token');
       const response = await fetch(`http://192.168.0.24:3000/favorites/${id}`, {
         method: "DELETE",
+       headers:{
+         Authorization: token || '',
+       }
+        
+
       });
       setFavorites(favorites.filter((favorite) => favorite._id !== id));
     } catch (error) {
